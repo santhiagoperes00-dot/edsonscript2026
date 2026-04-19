@@ -1,0 +1,203 @@
+-- ==========================================
+-- EDSON SCRIPT - UI PREMIUM
+-- ==========================================
+
+local CoreGui = game:GetService("CoreGui")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local LocalPlayer = Players.LocalPlayer
+
+-- Remove interface antiga se existir
+if CoreGui:FindFirstChild("EdsonScriptUI") then
+    CoreGui.EdsonScriptUI:Destroy()
+end
+
+-- ScreenGui Principal
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "EdsonScriptUI"
+ScreenGui.Parent = CoreGui
+ScreenGui.ResetOnSpawn = false
+
+-- ==========================================
+-- BOTÃO BOLINHA (TOGGLE RAINBOW)
+-- ==========================================
+local ToggleBtn = Instance.new("TextButton")
+ToggleBtn.Name = "ToggleBolinha"
+ToggleBtn.Parent = ScreenGui
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+ToggleBtn.Position = UDim2.new(0, 50, 0, 50)
+ToggleBtn.Size = UDim2.new(0, 100, 0, 50) -- Meio redonda (oval/pílula)
+ToggleBtn.Font = Enum.Font.GothamBold
+ToggleBtn.Text = "EDSON SCRIPT"
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleBtn.TextSize = 12
+ToggleBtn.AutoButtonColor = false
+
+local ToggleCorner = Instance.new("UICorner")
+ToggleCorner.CornerRadius = UDim.new(1, 0) -- Deixa arredondado (bolinha/pílula)
+ToggleCorner.Parent = ToggleBtn
+
+local UIStroke = Instance.new("UIStroke")
+UIStroke.Parent = ToggleBtn
+UIStroke.Thickness = 2
+UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+-- Efeito Rainbow na Borda da Bolinha
+RunService.RenderStepped:Connect(function()
+    local hue = tick() % 5 / 5
+    UIStroke.Color = Color3.fromHSV(hue, 1, 1)
+end)
+
+-- ==========================================
+-- MENU PRINCIPAL (PREMIUM)
+-- ==========================================
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 18)
+MainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
+MainFrame.Size = UDim2.new(0, 400, 0, 300)
+MainFrame.Visible = false
+MainFrame.Active = true
+MainFrame.Draggable = true -- Permite arrastar o menu
+
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 12) -- Bordas arredondadas premium
+MainCorner.Parent = MainFrame
+
+-- Título do Menu
+local Title = Instance.new("TextLabel")
+Title.Parent = MainFrame
+Title.BackgroundTransparency = 1
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.Font = Enum.Font.GothamBlack
+Title.Text = "EDSON SCRIPT"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 20
+
+local TitleLine = Instance.new("Frame")
+TitleLine.Parent = MainFrame
+TitleLine.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+TitleLine.Position = UDim2.new(0, 0, 0, 40)
+TitleLine.Size = UDim2.new(1, 0, 0, 1)
+
+-- Container dos Botões
+local ButtonContainer = Instance.new("ScrollingFrame")
+ButtonContainer.Parent = MainFrame
+ButtonContainer.BackgroundTransparency = 1
+ButtonContainer.Position = UDim2.new(0, 10, 0, 50)
+ButtonContainer.Size = UDim2.new(1, -20, 1, -60)
+ButtonContainer.ScrollBarThickness = 4
+ButtonContainer.CanvasSize = UDim2.new(0, 0, 0, 350)
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.Parent = ButtonContainer
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Padding = UDim.new(0, 10)
+
+-- ==========================================
+-- SISTEMA DE CRIAR BOTÕES
+-- ==========================================
+local Toggles = {
+    EspLinha = false,
+    EspVida = false,
+    EspNome = false,
+    EspEsqueleto = false,
+    AimbotRage = false,
+    AimbotLegit = false
+}
+
+local function CreateToggle(name, text, callback)
+    local Btn = Instance.new("TextButton")
+    Btn.Parent = ButtonContainer
+    Btn.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+    Btn.Size = UDim2.new(1, -10, 0, 40)
+    Btn.Font = Enum.Font.GothamSemibold
+    Btn.Text = text
+    Btn.TextColor3 = Color3.fromRGB(200, 200, 200)
+    Btn.TextSize = 14
+    
+    local BtnCorner = Instance.new("UICorner")
+    BtnCorner.CornerRadius = UDim.new(0, 8)
+    BtnCorner.Parent = Btn
+    
+    Btn.MouseButton1Click:Connect(function()
+        Toggles[name] = not Toggles[name]
+        
+        -- Animação de cor ao ativar/desativar
+        local targetColor = Toggles[name] and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(30, 30, 35)
+        local targetTextColor = Toggles[name] and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(200, 200, 200)
+        
+        TweenService:Create(Btn, TweenInfo.new(0.3), {BackgroundColor3 = targetColor, TextColor3 = targetTextColor}):Play()
+        
+        callback(Toggles[name])
+    end)
+end
+
+-- ==========================================
+-- FUNÇÕES DOS BOTÕES (LÓGICA)
+-- ==========================================
+
+CreateToggle("EspLinha", "ESP Linha (Tracers)", function(state)
+    if state then
+        print("[EDSON SCRIPT] ESP Linha Ativado")
+        -- Lógica de Drawing.new("Line") iria aqui
+    else
+        print("[EDSON SCRIPT] ESP Linha Desativado")
+    end
+end)
+
+CreateToggle("EspVida", "ESP Vida", function(state)
+    if state then
+        print("[EDSON SCRIPT] ESP Vida Ativado")
+        -- Lógica de Drawing.new("Square") / Healthbar iria aqui
+    else
+        print("[EDSON SCRIPT] ESP Vida Desativado")
+    end
+end)
+
+CreateToggle("EspNome", "ESP Nome", function(state)
+    if state then
+        print("[EDSON SCRIPT] ESP Nome Ativado")
+        -- Lógica de Drawing.new("Text") iria aqui
+    else
+        print("[EDSON SCRIPT] ESP Nome Desativado")
+    end
+end)
+
+CreateToggle("EspEsqueleto", "ESP Esqueleto", function(state)
+    if state then
+        print("[EDSON SCRIPT] ESP Esqueleto Ativado")
+        -- Lógica de ligar as joints dos personagens iria aqui
+    else
+        print("[EDSON SCRIPT] ESP Esqueleto Desativado")
+    end
+end)
+
+CreateToggle("AimbotRage", "Aimbot Rage (Puxa Rápido)", function(state)
+    if state then
+        Toggles.AimbotLegit = false -- Desativa o Legit se o Rage ligar
+        print("[EDSON SCRIPT] Aimbot Rage Ativado")
+        -- Lógica de CFrame instantâneo (Camera.CFrame = CFrame.new(...)) iria aqui
+    else
+        print("[EDSON SCRIPT] Aimbot Rage Desativado")
+    end
+end)
+
+CreateToggle("AimbotLegit", "Aimbot Legit (Smooth/Delay)", function(state)
+    if state then
+        Toggles.AimbotRage = false -- Desativa o Rage se o Legit ligar
+        print("[EDSON SCRIPT] Aimbot Legit Ativado")
+        -- Lógica de TweenService na câmera ou Lerp (suavização) iria aqui
+    else
+        print("[EDSON SCRIPT] Aimbot Legit Desativado")
+    end
+end)
+
+-- ==========================================
+-- LÓGICA DE ABRIR/FECHAR MENU
+-- ==========================================
+ToggleBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+end)
